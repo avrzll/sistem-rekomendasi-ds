@@ -66,7 +66,6 @@ st.markdown("""
             2rem;'>
             <h3 style='margin: 0;'>Temukan Destinasi Wisata Terbaik di Lumajang</h3>
             <p style='margin-top: 1rem;'>Jelajahi berbagai tempat wisata menarik dan dapatkan rekomendasi sesuai preferensi Anda</p>
-            <p style='margin-top: 1rem;'>Made with ❤️</p>
     </div>
 """, unsafe_allow_html=True)
 
