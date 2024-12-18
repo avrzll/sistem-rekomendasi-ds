@@ -7,7 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.decomposition import TruncatedSVD
 from sklearn.impute import SimpleImputer
 
-#<======================================== 
+#<======================================== PAGE CONFIG ========================================>
 st.set_page_config(
     page_title="Sistem Rekomendasi Wisata Lumajang",
     page_icon="🏖️",
@@ -70,22 +70,19 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Muat dataset
-
-
+#<======================================== LOAD DATASETS ========================================>
 @st.cache_data
 def load_data(file_name):
     return pd.read_csv(file_name, skip_blank_lines=True)
-
-
 places, ratings = load_data(
     "datasets/destination_place.csv").dropna(how='all'), load_data("./datasets/destination_rate_by_user.csv").dropna(how='all')
 
-# Tangani NaN
+#<======================================= PREPROCESSING ======================================>
 places['category'] = places['category'].fillna("tidak tersedia")
 places['destination_name'] = places['destination_name'].fillna("")
 ratings["rate_destination"] = ratings["rate_destination"].astype(float)
 
+#<================================== FUNCTION CONTENT BASED ==================================>
 # Content-Based Filtering (cosine_similarity)
 @st.cache_data
 def prepare_content_based():
@@ -106,40 +103,7 @@ def calculate_jaccard_similarity(row, selected_keywords):
     union = len(keywords.union(selected_set))
     return intersection / union if union > 0 else 0
 
-# def prepare_collaborative_model():
-#     user_ids = ratings['Id_User'].unique().tolist()
-#     place_ids = ratings['Id_Tempat'].unique().tolist()
-
-#     user_to_user_encoded = {x: i for i, x in enumerate(user_ids)}
-#     place_to_place_encoded = {x: i for i, x in enumerate(place_ids)}
-
-#     ratings['user'] = ratings['Id_User'].map(user_to_user_encoded)
-#     ratings['place'] = ratings['Id_Tempat'].map(place_to_place_encoded)
-
-#     users_count = len(user_to_user_encoded)
-#     places_count = len(place_to_place_encoded)
-
-#     class RecommenderNet(tf.keras.Model):
-#         def _init_(self, users_count, places_count, embedding_size, **kwargs):
-#             super(RecommenderNet, self)._init_(**kwargs)
-#             self.user_embedding = tf.keras.layers.Embedding(
-#                 users_count, embedding_size, embeddings_initializer="he_normal"
-#             )
-#             self.place_embedding = tf.keras.layers.Embedding(
-#                 places_count, embedding_size, embeddings_initializer="he_normal"
-#             )
-
-#         def call(self, inputs):
-#             user_vector = self.user_embedding(inputs[:, 0])
-#             place_vector = self.place_embedding(inputs[:, 1])
-#             return tf.reduce_sum(user_vector * place_vector, axis=1)
-
-#     model = RecommenderNet(users_count, places_count, 50)
-#     return model, user_to_user_encoded, place_to_place_encoded
-
-
-# model, user_to_user_encoded, place_to_place_encoded = prepare_collaborative_model()
-
+#<===================================== SUMMARY DATASETS =====================================>
 st.markdown("<div style='margin-bottom: 2rem;'>", unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
 with col1:
@@ -184,6 +148,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "📋 Daftar Wisata"
 ])
 
+#<================================= CBF - COSINE SIMILARITY =================================>
 with tab1:
     st.header("🔍 Pencarian dan Rekomendasi Wisata Berdasarkan Cossine Similarity")
     st.write("Metode cosine similarity merupakan metode untuk menghitung kesamaan antara dua buah objek yang dinyatakan dalam dua buah vector dengan menggunakan keywords (kata kunci) dari sebuah dokumen sebagai ukuran")
@@ -230,6 +195,7 @@ with tab1:
                         </div>
                     """, unsafe_allow_html=True)
 
+#<================================= CBF - JACCARD SIMILARITY ================================>
 with tab2:
     st.header("🗺️ Rekomendasi Tempat Wisata Berdasarkan Jaccard Similarity")
     st.write("Jaccard Similarity merupakan algoritma yang berfugsi untuk membandingkan antar dua dokumen dengan menghitung kemeripan atau perbedaan dari beberapa objek.")
@@ -260,6 +226,7 @@ with tab2:
                     </div>
                 """, unsafe_allow_html=True)
 
+#<============================== COLLABORATIVE FILTERING (SVD) ==============================>
 with tab3:
     # Collaborative Filtering
     if {"id_user", "id_destination", "rate_destination"}.issubset(ratings.columns):
@@ -330,6 +297,7 @@ with tab3:
     else:
         st.error("Dataset harus memiliki kolom: id_user, id_destination, rate_destination")
 
+#<===================================== FILTER KATEGORI =====================================>
 with tab4:
     st.header("📋 Daftar Wisata")
     col1, col2 = st.columns([1, 2])
@@ -357,6 +325,7 @@ with tab4:
                 </div>
             """, unsafe_allow_html=True)
 
+#<========================================= FOOTER ========================================>
 st.markdown("""
 <div class='fixed-footer'>
     <p>Copyright © 2024 | Sistem Rekomendasi Wisata Lumajang</p>
