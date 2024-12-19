@@ -4,7 +4,11 @@ colorama==0.4.6
 Flask==3.0.3
 itsdangerous==2.2.0
 Jinja2==3.1.4
+joblib==1.4.2
 MarkupSafe==2.1.5
 numpy==2.1.1
 opencv-python==4.10.0.84
+scikit-learn==1.6.0
+scipy==1.14.1
+threadpoolctl==3.5.0
 Werkzeug==3.0.4
