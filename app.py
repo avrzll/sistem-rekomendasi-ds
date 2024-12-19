@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.decomposition import TruncatedSVD
@@ -86,7 +85,7 @@ ratings["rate_destination"] = ratings["rate_destination"].astype(float)
 @st.cache_data
 def prepare_content_based():
     tf = TfidfVectorizer()
-    tfidf_matrix = tf.fit_transform(places['category'])
+    tfidf_matrix = tf.fit_transform(places['description'])
     cosine_sim = cosine_similarity(tfidf_matrix)
     cosine_sim_df = pd.DataFrame(
         cosine_sim, index=places['destination_name'], columns=places['destination_name']
@@ -181,6 +180,7 @@ with tab1:
         else:
             st.subheader("✨ Rekomendasi Tempat Wisata")
             for _, row in recommendations.iterrows():
+                # row
                 with st.container():
                     st.markdown(f"""
                         <div style='
@@ -191,6 +191,7 @@ with tab1:
                                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>
                                 <h4 style='margin: 0; color: #4CAF50;'>{row['destination_name']}</h4>
                                 <p style='margin: 0.5rem 0;'>⭐ {row['rate']:.2f} | 🏷️ {row['category']} | 💰 Rp {row['price']:,.0f}</p>
+                                <p>Deskripsi: {row['description']}</p>
                         </div>
                     """, unsafe_allow_html=True)
 
